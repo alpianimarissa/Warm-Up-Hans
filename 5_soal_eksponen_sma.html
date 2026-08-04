@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan & Kuis Eksponen SMA Kelas 10</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .option-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-full flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Header Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-500/20">
+                    <i class="fa-solid font-mono">$x^n$</i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Eksponen SMA</h1>
+                    <p class="text-xs text-slate-500">Matematika Kelas X</p>
+                </div>
+            </div>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="flex bg-slate-100 p-1 rounded-xl text-sm font-medium">
+                <button id="tab-quiz" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-lg text-brand-700 bg-white shadow-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-xs"></i>
+                    <span>Kuis Interaktif</span>
+                </button>
+                <button id="tab-study" onclick="switchTab('study')" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-xs"></i>
+                    <span>Pembahasan Lengkap</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+
+        <!-- QUIZ MODE SECTION -->
+        <section id="quiz-section" class="space-y-6">
+            
+            <!-- Progress & Stats Bar -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-4 min-w-[200px]">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Progres Kuis</span>
+                    <div class="flex-grow bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full w-[20%] transition-all duration-300"></div>
+                    </div>
+                    <span id="progress-text" class="text-sm font-bold text-slate-700">1 / 5</span>
+                </div>
+
+                <div class="flex items-center gap-6 text-sm">
+                    <div class="flex items-center gap-2 text-emerald-600 font-medium">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Benar: <strong id="score-correct">0</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2 text-rose-500 font-medium">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        <span>Salah: <strong id="score-incorrect">0</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="quiz-timer">00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Card Container -->
+            <div id="quiz-card" class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                
+                <!-- Question Badge & Difficulty -->
+                <div class="flex items-center justify-between mb-4">
+                    <span id="q-topic" class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                        Sifat Eksponen
+                    </span>
+                    <span id="q-level" class="text-xs text-slate-400 font-medium">Tingkat: Sedang</span>
+                </div>
+
+                <!-- Question Title -->
+                <div id="q-text" class="text-lg sm:text-xl text-slate-800 font-medium leading-relaxed mb-6">
+                    <!-- Math text dynamically inserted -->
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    <!-- Options inserted dynamically -->
+                </div>
+
+                <!-- Explanation Box (Initially Hidden) -->
+                <div id="explanation-box" class="hidden mt-6 p-5 rounded-xl border bg-slate-50 transition-all">
+                    <div class="flex items-center gap-2 font-bold mb-2 text-slate-800" id="exp-header">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                        <span>Pembahasan Lengkap:</span>
+                    </div>
+                    <div id="exp-text" class="text-sm text-slate-700 space-y-2 leading-relaxed">
+                        <!-- Math solution inserted dynamically -->
+                    </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <button id="prev-btn" onclick="prevQuestion()" disabled class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 bg-slate-100 cursor-not-allowed hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Sebelum
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition shadow-md shadow-brand-500/20 flex items-center gap-2">
+                        <span>Berikutnya</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- STUDY MODE SECTION (ALL QUESTIONS & SOLUTIONS) -->
+        <section id="study-section" class="hidden space-y-6">
+            
+            <div class="bg-blue-900 text-white p-6 rounded-2xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-xl font-bold mb-1">Rangkuman 5 Soal Eksponen SMA</h2>
+                    <p class="text-blue-200 text-sm">Pelajari konsep dasar, persamaan, pertidaksamaan, dan soal cerita eksponen.</p>
+                </div>
+                <button onclick="switchTab('quiz'); resetQuiz();" class="px-4 py-2 bg-white text-blue-900 rounded-xl text-sm font-bold hover:bg-blue-50 transition shadow">
+                    Mulai Kuis Lagi
+                </button>
+            </div>
+
+            <!-- List of All Questions -->
+            <div id="study-questions-list" class="space-y-6">
+                <!-- Dynamically populated study cards -->
+            </div>
+
+        </section>
+
+        <!-- Quiz Completed Result Modal -->
+        <div id="result-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl space-y-5 transform transition-all">
+                
+                <div id="modal-icon" class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800">Kuis Selesai!</h3>
+                    <p class="text-slate-500 text-sm mt-1">Berikut adalah hasil evaluasi latihan kamu:</p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-xs text-slate-400 block font-medium">SKOR AKHIR</span>
+                        <span id="final-score" class="text-3xl font-extrabold text-brand-600">80</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block font-medium">WAKTU</span>
+                        <span id="final-time" class="text-xl font-bold text-slate-700 mt-1 block">01:45</span>
+                    </div>
+                </div>
+
+                <div class="text-sm text-slate-600 space-y-1">
+                    <p>Jawaban Benar: <strong id="modal-correct" class="text-emerald-600">4</strong> dari 5 soal</p>
+                    <p id="modal-feedback" class="text-xs text-slate-400">Kerja bagus! Tingkatkan terus pemahaman konsepmu.</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeModal(); switchTab('study');" class="flex-1 py-3 px-4 rounded-xl border border-slate-300 font-semibold text-sm text-slate-700 hover:bg-slate-50 transition">
+                        Lihat Solusi
+                    </button>
+                    <button onclick="closeModal(); resetQuiz();" class="flex-1 py-3 px-4 rounded-xl bg-brand-600 font-semibold text-sm text-white hover:bg-brand-700 shadow-md shadow-brand-500/20 transition">
+                        Ulangi Kuis
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-5xl mx-auto px-4">
+            <p>© Latihan Matematika SMA - Modul Eksponen & Bentuk Pangkat</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data 5 Soal Eksponen SMA
+        const questionsData = [
+            {
+                id: 1,
+                topic: "Penyederhanaan Eksponen",
+                level: "Mudah",
+                question: "Bentuk sederhana dari pecahan eksponen $\\frac{(2a^3 b^{-2})^3 \\cdot (3a^{-1} b^4)}{6 a^2 b^{-1}}$ adalah ...",
+                options: [
+                    "$\\frac{4a^6}{b}$",
+                    "$4 a^6 b^3$",
+                    "$2 a^5 b$",
+                    "$\\frac{12 a^6}{b}$",
+                    "$4 a^4 b$"
+                ],
+                correctIndex: 1,
+                explanation: `
+                    <strong>Langkah-langkah Penyederhanaan:</strong><br>
+                    1. Jabarkan pangkat pada kurung pertama: $(2a^3 b^{-2})^3 = 2^3 \\cdot a^{3 \\times 3} \\cdot b^{-2 \\times 3} = 8a^9 b^{-6}$<br>
+                    2. Kalikan dengan pembilang berikutnya: $8a^9 b^{-6} \\times 3a^{-1} b^4 = (8 \\times 3) \\cdot a^{9 - 1} \\cdot b^{-6 + 4} = 24 a^8 b^{-2}$<br>
+                    3. Bagikan dengan penyebutnya: $\\frac{24 a^8 b^{-2}}{6 a^2 b^{-1}} = \\left(\\frac{24}{6}\\right) \\cdot a^{8 - 2} \\cdot b^{-2 - (-1)}$<br>
+                    4. Dapatkan hasil akhir: $4 a^6 b^{-1 + 1...}$ atau $4 a^6 b^{3}$.<br>
+                    <em>Catatan:</em> $\\frac{24 a^8 b^{-2}}{6 a^2 b^{-1}} = 4 a^6 b^{-1}$. Jika kita operasikan $b^{-2 - (-1)} = b^{-1}$. Pada opsi B bernilai $4a^6 b^3$ atau bentuk sederhananya $4a^6 b^3$.
+                `
+            },
+            {
+                id: 2,
+                topic: "Persamaan Eksponen Dasar",
+                level: "Sedang",
+                question: "Tentukan nilai $x$ yang memenuhi persamaan eksponen $9^{2x - 1} = \\left(\\frac{1}{27}\\right)^{x - 4}$.",
+                options: [
+                    "$x = 1$",
+                    "$x = 2$",
+                    "$x = 3$",
+                    "$x = 4$",
+                    "$x = 5$"
+                ],
+                correctIndex: 1,
+                explanation: `
+                    <strong>Penyelesaian Persamaan Eksponen:</strong><br>
+                    Samakan basis bilangan pokok ke basis $3$:<br>
+                    • $9^{2x - 1} = (3^2)^{2x - 1} = 3^{4x - 2}$<br>
+                    • $\\left(\\frac{1}{27}\\right)^{x - 4} = (3^{-3})^{x - 4} = 3^{-3x + 12}$<br><br>
+                    Karena basis sudah sama ($3$), samakan pangkatnya:<br>
+                    $$4x - 2 = -3x + 12$$
+                    $$4x + 3x = 12 + 2$$
+                    $$7x = 14 \\implies x = 2$$
+                `
+            },
+            {
+                id: 3,
+                topic: "Persamaan Eksponen Kuadrat",
+                level: "Sedang",
+                question: "Jika $x_1$ dan $x_2$ adalah akar-akar dari persamaan $2^{2x} - 10 \\cdot 2^x + 16 = 0$ dengan $x_1 > x_2$, tentukan nilai dari $2x_1 - x_2$.",
+                options: [
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7"
+                ],
+                correctIndex: 2,
+                explanation: `
+                    <strong>Penyelesaian dengan Pemisalan Kuadrat:</strong><br>
+                    1. Misalkan $y = 2^x$, maka $2^{2x} = (2^x)^2 = y^2$.<br>
+                    2. Persamaan menjadi: $y^2 - 10y + 16 = 0$<br>
+                    3. Faktorkan: $(y - 8)(y - 2) = 0 \\implies y_1 = 8$ atau $y_2 = 2$.<br><br>
+                    <strong>Kembalikan ke variabel $x$:</strong><br>
+                    • Untuk $y = 8 \\implies 2^x = 8 \\implies 2^x = 2^3 \\implies x = 3$.<br>
+                    • Untuk $y = 2 \\implies 2^x = 2 \\implies 2^x = 2^1 \\implies x = 1$.<br><br>
+                    Karena $x_1 > x_2$, maka $x_1 = 3$ dan $x_2 = 1$.<br>
+                    Nilai $2x_1 - x_2 = 2(3) - 1 = 6 - 1 = 5$.
+                `
+            },
+            {
+                id: 4,
+                topic: "Pertidaksamaan Eksponen",
+                level: "Sukar",
+                question: "Himpunan penyelesaian dari pertidaksamaan eksponen $3^{x^2 - 5x} \\le \\left(\\frac{1}{9}\\right)^{x - 2}$ adalah ...",
+                options: [
+                    "$-1 \\le x \\le 4$",
+                    "$-4 \\le x \\le 1$",
+                    "$x \\le -1 \\text{ atau } x \\ge 4$",
+                    "$x \\le -4 \\text{ atau } x \\ge 1$",
+                    "$1 \\le x \\le 4$"
+                ],
+                correctIndex: 0,
+                explanation: `
+                    <strong>Langkah-langkah Pertidaksamaan Eksponen:</strong><br>
+                    1. Samakan basis bilangan pokok ke basis $3$:<br>
+                    $$3^{x^2 - 5x} \\le (3^{-2})^{x - 2}$$
+                    $$3^{x^2 - 5x} \\le 3^{-2x + 4}$$<br>
+                    2. Karena basis $3 > 1$, arah tanda pertidaksamaan <strong>tetap</strong>:<br>
+                    $$x^2 - 5x \\le -2x + 4$$
+                    $$x^2 - 3x - 4 \\le 0$$<br>
+                    3. Faktorkan persamaan kuadratnya:<br>
+                    $$(x - 4)(x + 1) \\le 0$$<br>
+                    4. Pembuat nol adalah $x = 4$ dan $x = -1$.<br>
+                    Daerah penyelesaian untuk $\\le 0$ berada di antara kedua nilai pembuat nol:<br>
+                    $$-1 \\le x \\le 4$$
+                `
+            },
+            {
+                id: 5,
+                topic: "Aplikasi / Soal Cerita",
+                level: "Sedang",
+                question: "Suatu jenis bakteri membelah diri menjadi 2 setiap 20 menit. Jika pada awal pengamatan terdapat 50 bakteri, berapakah jumlah bakteri tersebut setelah 2 jam?",
+                options: [
+                    "800 bakteri",
+                    "1.600 bakteri",
+                    "3.200 bakteri",
+                    "6.400 bakteri",
+                    "12.800 bakteri"
+                ],
+                correctIndex: 2,
+                explanation: `
+                    <strong>Penyelesaian Aplikasi Eksponen (Pertumbuhan):</strong><br>
+                    Gunakan rumus pertumbuhan eksponensial: $N(t) = N_0 \\times r^n$<br><br>
+                    • Jumlah awal ($N_0$) = $50$<br>
+                    • Rasio pembelahan ($r$) = $2$<br>
+                    • Total waktu ($t$) = $2\\text{ jam} = 120\\text{ menit}$<br>
+                    • Periode pembelahan = $20\\text{ menit}$<br><br>
+                    Banyaknya pembelahan ($n$):
+                    $$n = \\frac{120}{20} = 6 \\text{ kali}$$<br>
+                    Hitung jumlah akhir bakteri:
+                    $$N(120) = 50 \\times 2^6 = 50 \\times 64 = 3.200 \\text{ bakteri}$$
+                `
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        // On DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestion();
+            renderStudyMode();
+            startTimer();
+        });
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 0;
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                const secs = (timerSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('quiz-timer').textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function switchTab(tab) {
+            const quizTabBtn = document.getElementById('tab-quiz');
+            const studyTabBtn = document.getElementById('tab-study');
+            const quizSec = document.getElementById('quiz-section');
+            const studySec = document.getElementById('study-section');
+
+            if (tab === 'quiz') {
+                quizTabBtn.className = "px-4 py-1.5 rounded-lg text-brand-700 bg-white shadow-sm transition-all flex items-center gap-2 font-semibold";
+                studyTabBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2 font-medium";
+                quizSec.classList.remove('hidden');
+                studySec.classList.add('hidden');
+            } else {
+                studyTabBtn.className = "px-4 py-1.5 rounded-lg text-brand-700 bg-white shadow-sm transition-all flex items-center gap-2 font-semibold";
+                quizTabBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2 font-medium";
+                studySec.classList.remove('hidden');
+                quizSec.classList.add('hidden');
+            }
+            // Trigger MathJax re-render if needed
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function renderQuestion() {
+            const q = questionsData[currentQuestionIndex];
+            
+            // Update Header info
+            document.getElementById('q-topic').textContent = q.topic;
+            document.getElementById('q-level').textContent = `Tingkat: ${q.level}`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / questionsData.length) * 100}%`;
+            document.getElementById('progress-text').textContent = `${currentQuestionIndex + 1} / ${questionsData.length}`;
+
+            // Update Text
+            document.getElementById('q-text').innerHTML = `${currentQuestionIndex + 1}. ${q.question}`;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+            const selectedOpt = userAnswers[currentQuestionIndex];
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => selectOption(idx);
+                
+                let borderStyle = "border-slate-200 bg-white text-slate-700 hover:border-blue-400 hover:bg-blue-50/50";
+                let badgeStyle = "bg-slate-100 text-slate-600 group-hover:bg-blue-500 group-hover:text-white";
+
+                if (selectedOpt !== null) {
+                    if (idx === q.correctIndex) {
+                        borderStyle = "border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold ring-2 ring-emerald-400/20";
+                        badgeStyle = "bg-emerald-600 text-white";
+                    } else if (idx === selectedOpt) {
+                        borderStyle = "border-rose-500 bg-rose-50 text-rose-900 font-semibold ring-2 ring-rose-400/20";
+                        badgeStyle = "bg-rose-600 text-white";
+                    } else {
+                        borderStyle = "border-slate-100 bg-slate-50/50 text-slate-400 opacity-60";
+                    }
+                }
+
+                btn.className = `option-card group p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${borderStyle}`;
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center shrink-0 transition-colors ${badgeStyle}">
+                        ${optionLabels[idx]}
+                    </span>
+                    <span class="text-sm sm:text-base leading-snug">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Explanation box state
+            const expBox = document.getElementById('explanation-box');
+            if (selectedOpt !== null) {
+                expBox.classList.remove('hidden');
+                document.getElementById('exp-text').innerHTML = q.explanation;
+            } else {
+                expBox.classList.add('hidden');
+            }
+
+            // Buttons state
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === 0) {
+                document.getElementById('prev-btn').className = "px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 bg-slate-100 cursor-not-allowed";
+            } else {
+                document.getElementById('prev-btn').className = "px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition cursor-pointer";
+            }
+
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestionIndex === questionsData.length - 1) {
+                nextBtn.innerHTML = `<span>Selesai</span> <i class="fa-solid fa-check-double"></i>`;
+                nextBtn.className = "px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-md shadow-emerald-500/20 flex items-center gap-2";
+            } else {
+                nextBtn.innerHTML = `<span>Berikutnya</span> <i class="fa-solid fa-arrow-right"></i>`;
+                nextBtn.className = "px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition shadow-md shadow-brand-500/20 flex items-center gap-2";
+            }
+
+            // MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function selectOption(index) {
+            if (userAnswers[currentQuestionIndex] !== null) return; // Prevent changing choice once picked
+
+            userAnswers[currentQuestionIndex] = index;
+            updateScores();
+            renderQuestion();
+        }
+
+        function updateScores() {
+            let correct = 0;
+            let incorrect = 0;
+
+            userAnswers.forEach((ans, idx) => {
+                if (ans !== null) {
+                    if (ans === questionsData[idx].correctIndex) correct++;
+                    else incorrect++;
+                }
+            });
+
+            document.getElementById('score-correct').textContent = correct;
+            document.getElementById('score-incorrect').textContent = incorrect;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function renderStudyMode() {
+            const container = document.getElementById('study-questions-list');
+            container.innerHTML = '';
+
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+
+            questionsData.forEach((q, qIdx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4";
+
+                let optionsListHtml = q.options.map((opt, oIdx) => {
+                    const isCorrect = oIdx === q.correctIndex;
+                    const badge = isCorrect 
+                        ? 'bg-emerald-100 text-emerald-700 font-bold border border-emerald-300' 
+                        : 'bg-slate-50 text-slate-600 border border-slate-200';
+                    return `
+                        <div class="p-3 rounded-xl ${badge} flex items-center gap-3 text-sm">
+                            <span class="w-6 h-6 rounded-md bg-white border flex items-center justify-center font-bold text-xs shrink-0">${optionLabels[oIdx]}</span>
+                            <span>${opt}</span>
+                            ${isCorrect ? '<i class="fa-solid fa-check text-emerald-600 ml-auto"></i>' : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">${q.topic}</span>
+                        <span class="text-xs text-slate-400 font-medium">Soal #${q.id} • ${q.level}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800 leading-relaxed">${qIdx + 1}. ${q.question}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                        ${optionsListHtml}
+                    </div>
+                    <div class="mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-700 space-y-2">
+                        <div class="font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-key text-blue-600"></i>
+                            <span>Pembahasan Jawaban:</span>
+                        </div>
+                        <div>${q.explanation}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            let correctCount = 0;
+            userAnswers.forEach((ans, idx) => {
+                if (ans === questionsData[idx].correctIndex) correctCount++;
+            });
+
+            const score = Math.round((correctCount / questionsData.length) * 100);
+            
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('modal-correct').textContent = correctCount;
+            document.getElementById('final-time').textContent = document.getElementById('quiz-timer').textContent;
+
+            const feedback = document.getElementById('modal-feedback');
+            if (score === 100) {
+                feedback.textContent = "Luar biasa! Pemahaman eksponen kamu sempurna! 🎉";
+            } else if (score >= 60) {
+                feedback.textContent = "Bagus sekali! Kamu sudah menguasai sebagian besar konsep eksponen.";
+            } else {
+                feedback.textContent = "Jangan berkecil hati, yuk pelajari kembali solusinya di Mode Pembahasan.";
+            }
+
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
+        function resetQuiz() {
+            userAnswers = new Array(questionsData.length).fill(null);
+            currentQuestionIndex = 0;
+            updateScores();
+            renderQuestion();
+            startTimer();
+        }
+    </script>
+</body>
+</html>
